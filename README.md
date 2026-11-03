@@ -1,41 +1,27 @@
-# Agent Instructions Auto-Sync
+# Agent Instructions
 
-## How It Works
+A collection of instructions for AI coding agents. Each instruction is a short, focused Markdown file describing one behaviour an agent should follow.
 
-Pi syncs agent instructions on startup via the `pi-sync-instructions` package, whose source lives in `~/dev/pi-sync-instructions/` (installed with `pi install` from that path; see its README for configuration and publishing).
+## Layout
 
-**When Pi loads:**
-1. The extension fires on the `session_start` event (or run `/sync-instructions`)
-2. It reads `INDEX.md` from the configured instructions folder (default `~/.agents/instructions`)
-3. It concatenates every instruction file linked from INDEX.md
-4. Output is written to `~/.pi/agent/AGENTS.md`
+- `INDEX.md` — the master list linking to every instruction.
+- `*.md` — one file per instruction, named in kebab-case (e.g. `verify-current-state.md`).
 
-## Adding New Instructions
+## Current Instructions
 
-To add a new instruction that auto-syncs:
+See [INDEX.md](./INDEX.md).
 
-1. Create a new `.md` file in `~/.agents/instructions/`
-   - Example: `~/.agents/instructions/my-new-instruction.md`
+## Adding an Instruction
 
-2. Add a link to it in `~/.agents/instructions/INDEX.md`
-   - Format: `- [My New Instruction](./my-new-instruction.md)`
+1. Create a new kebab-case `.md` file in this folder, e.g. `my-new-instruction.md`.
+   - Start with a clear title and a concise explanation.
+   - Add numbered steps or sections, and practical examples.
+   - Keep to one cohesive instruction per file.
+2. Link it from `INDEX.md`:
+   `- [My New Instruction](./my-new-instruction.md)`
 
-3. **No additional steps needed** — the sync will happen automatically when Pi next loads
+## Conventions
 
-## Files Involved
-
-| File | Purpose |
-|------|---------|
-| `~/.agents/instructions/INDEX.md` | Master index of all instruction files |
-| `~/dev/pi-sync-instructions/` | The `pi-sync-instructions` npm package (extension + sync logic) |
-| `~/.pi/agent/AGENTS.md` | Generated output (authoritative in Pi) |
-
-## Manual Sync
-
-Run `/sync-instructions` inside Pi, or restart Pi.
-
-## Troubleshooting
-
-- If instructions don't update, check that the instruction file is properly linked in `INDEX.md`
-- The extension runs silently on success; errors appear as notifications in Pi
-- Check `~/.pi/instructions-sync.log` for detailed sync history
+- One instruction per file.
+- Cross-reference related instructions by relative link.
+- `INDEX.md` is the source of truth for which instructions exist.
