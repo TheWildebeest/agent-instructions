@@ -1,33 +1,22 @@
 # Wait Without a Clock
 
-I cannot wait. Time passing does not start a turn. Between my turns, nothing runs.
-Only an event starts my next turn: a human message, a job that ends, or a wake I armed.
+Nothing runs between my turns. Only an event starts my next turn: a human message, a job that ends, or a wake I armed. Time passing starts nothing.
 
-## When this applies
+## Before I end any turn
 
-Any time a result will come later, even if nobody said "wait":
-- a reply such as "a few minutes", "retry after", "queued", "not yet"
-- a build, deploy, cache, page publish, CI run, or review by another person
-- my own plan to "check again" or "come back to this"
+Is anything I need still pending? Look for output like pending, queued, in progress, building, propagating, "retry after", "a few minutes", or a review or reply from someone else. If yes, name the event that starts my next turn. If I cannot name one, none exists. Then pick:
 
-## Before I end a turn with something pending
+1. **Machine wait, short (under about 2 minutes):** poll in one command that exits as soon as the result appears. At the limit, stop and report the state. Never sleep for a fixed time and hope.
+2. **Machine wait, longer (the default):** arm a wake. Start a short job that sleeps and then ends. Its end starts my next turn.
+   In Limen: `limen spawn --engine pi --provider <p> --model <cheap> --thinking low --timeout 10m --label "timer" "Run: sleep 170 && date. Touch nothing else. Reply: timer done."`
+   Use `&&`, not `;`. Tell the human what the wake waits for and how long.
+3. **Wait on a person:** a timer does not help. Say what I need and from whom: "I cannot check on my own. Tell me when <event> is done."
 
-Ask: **what event starts my next turn?** If none, nothing is scheduled. Then do one of these:
+## Check my last message
 
-1. **Check now, within a limit.** Poll with a command that sleeps, for at most about 2 minutes.
-   Stop at the limit and report the state.
-2. **Arm a wake.** Start a short job that sleeps and then ends. Its end wakes me.
-   In Limen, use one cheap job, then check when it ends:
-   `limen spawn --engine pi --provider <p> --model <cheap> --thinking low --timeout 10m --label "timer" "Run: sleep 170 && date. Touch nothing else. Reply: timer done."`
-   Use `&&`, not `;`, so Limen can record that the command ran.
-3. **Hand it to the human.** Say plainly: "I cannot check on my own. Tell me when to check."
+If it says I will check, verify, retry or return later ("I'll check back", "once it finishes I will…", "let me know when"), it is a false promise unless a wake is armed. Arm one, or rewrite the ending.
 
-## Do not
+Bad: "CI is running; I'll check in a few minutes."
+Good: "CI is running. Timer armed for 3 min (job `timer`); I will read the CI result when it ends."
 
-- Do not write "I'll check back", "I will wait", or "let me know when" unless option 2 is armed.
-- Do not treat a stopped turn as a wait. Nothing resumes it.
-- Do not close or clean up a step that the other side has not confirmed (see [No Silent Substitution](./no-silent-substitution.md)).
-
-## Report it
-
-When I arm a wake, say so: what it waits for, and how long.
+Never close or clean up a step the other side has not confirmed (see No Silent Substitution).
