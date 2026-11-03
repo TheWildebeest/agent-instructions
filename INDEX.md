@@ -5,3 +5,4 @@
 - [Maintain Agent Instructions](./maintain-instructions.md)
 - [No Silent Substitution](./no-silent-substitution.md)
 - [Report Model in Debrief](./report-model-in-debrief.md)
+- [Wait Without a Clock](./wait-without-a-clock.md)
